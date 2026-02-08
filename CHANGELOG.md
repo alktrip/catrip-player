@@ -4,6 +4,20 @@ All notable changes to CatripPlayer are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2025-02-08
+
+### Added
+
+- **About window** with app styling: custom dialog (no native menu) opened from Help → About CatripPlayer.
+- **Logo** at the top of the About window, followed by app name, version, description, and **GitHub link** (opens in browser).
+- **i18n** for About: `about.close` and `about.githubLink` in all locales (es, en, fr, de, pt, zh).
+
+### Changed
+
+- **About** no longer uses the native message box; uses a frameless window (496×420) with the same visual style as the app (card, aura background). Close via button or Escape.
+
+---
+
 ## [1.1.1] - 2025-02-06
 
 ### Added
@@ -63,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+[1.1.2]: https://github.com/alktrip/catrip-player/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/alktrip/catrip-player/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/alktrip/catrip-player/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/alktrip/catrip-player/releases/tag/v1.0.0
