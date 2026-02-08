@@ -1,34 +1,34 @@
 # CatripPlayer
 
-Cliente unificado de streaming para escritorio. Una sola ventana para Netflix, YouTube, Twitch, Amazon Prime Video, HBO Max, Apple TV, Crunchyroll, Disney+ y más. Desarrollado con **Electron** y **TypeScript** (Linux, Windows y macOS).
+Unified streaming client for desktop. One window for Netflix, YouTube, Twitch, Amazon Prime Video, HBO Max, Apple TV, Crunchyroll, Disney+ and more. Built with **Electron** and **TypeScript** (Linux, Windows, and macOS).
 
-![Versión](https://img.shields.io/badge/versi%C3%B3n-1.1.1-blue) ![Licencia](https://img.shields.io/badge/licencia-GPL--3.0-blue)
-
----
-
-## Descripción
-
-CatripPlayer es una aplicación de escritorio que centraliza el acceso a plataformas de vídeo en streaming en un único **Chromium embebido**. Incluye:
-
-- **Menú de servicios** con cuadrícula visual (Evolución Aura: mesh gradient, iluminación ambiental, paralaje y animaciones).
-- **Ventana única** que carga la web del servicio elegido (Netflix, YouTube, etc.) con soporte **Widevine (DRM)** en Linux.
-- **Internacionalización (i18n):** español, inglés, francés, portugués, alemán y chino. El idioma se elige en **Preferencias → Idioma** y se aplica al menú, pantalla de servicios, diálogos y isla flotante.
-- **Opciones de ventana:** siempre encima, sin marco (Isla Flotante), pantalla completa, recordar posición y tamaño.
-- **Bloqueo de anuncios** opcional (Ghostery).
-- **Persistencia** de preferencias y último servicio usado (electron-store).
-- **URL personalizada** mediante un diálogo con el mismo estilo visual de la aplicación (no ventana nativa del sistema).
-- **Editar configuración:** Preferencias → Editar configuración… abre el `config.json` de la app en el editor del sistema.
+![Version](https://img.shields.io/badge/version-1.1.1-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 
 ---
 
-## Requisitos
+## Description
 
-- **Node.js** 18 o superior
-- **npm** (o yarn / pnpm)
+CatripPlayer is a desktop app that centralizes access to video streaming platforms in a single **embedded Chromium** window. It includes:
+
+- **Service menu** with a visual grid (Aura evolution: mesh gradient, ambient lighting, parallax, and animations).
+- **Single window** that loads the chosen service’s website (Netflix, YouTube, etc.) with **Widevine (DRM)** support on Linux.
+- **Internationalization (i18n):** Spanish, English, French, Portuguese, German, and Chinese. Language is set under **Preferences → Language** and applies to the menu, service screen, dialogs, and floating island.
+- **Window options:** always on top, frameless (Floating Island), full screen, remember position and size.
+- **Ad blocking** (optional, via Ghostery).
+- **Persistent** preferences and last-used service (electron-store).
+- **Custom URL** via a dialog that matches the app’s visual style (not a native system window).
+- **Edit configuration:** Preferences → Edit configuration… opens the app’s `config.json` in the system editor.
 
 ---
 
-## Instalación
+## Requirements
+
+- **Node.js** 18 or higher
+- **npm** (or yarn / pnpm)
+
+---
+
+## Installation
 
 ```bash
 git clone https://github.com/alktrip/catrip-player.git
@@ -36,26 +36,26 @@ cd catrip-player
 npm install
 ```
 
-> La aplicación usa **Electron de CastLabs** (Widevine) desde GitHub. Si `npm install` falla, comprueba que tengas acceso a `github.com/castlabs/electron-releases`.
+> The app uses **CastLabs Electron** (Widevine) from GitHub. If `npm install` fails, ensure you can access `github.com/castlabs/electron-releases`.
 
 ---
 
-## Desarrollo
+## Development
 
 ```bash
 npm start
 ```
 
-Se compila TypeScript, se abre la ventana y se muestra el menú de servicios. Desde la cuadrícula o el menú **Navegación** puedes abrir cualquier plataforma; **URL personalizada** (Ctrl+O) abre un diálogo con el estilo de la app. En **Preferencias** se configuran idioma, ventana, anuncios, servicios visibles, servicio al iniciar y opción para editar el archivo de configuración.
+TypeScript is compiled, the window opens, and the service menu is shown. From the grid or the **Navigation** menu you can open any platform; **Custom URL** (Ctrl+O) opens a dialog with the app’s style. Under **Preferences** you configure language, window, ads, visible services, startup service, and the option to edit the config file.
 
-### Solución de problemas
+### Troubleshooting
 
-| Problema | Solución |
-|----------|----------|
-| `libva error: i965_drv_video.so init failed` | El script ya usa `LIBVA_DRIVER_NAME=iHD`. Si persiste: `sudo apt install intel-media-va-driver-non-free`. |
-| "Failed to install Widevine" (404) | La app se abre igual. Para Netflix se requiere Electron CastLabs (incluido). |
-| Crash al abrir Netflix | `npm start` ya incluye `--no-sandbox`. Sin GPU: `electron . --no-sandbox --disable-gpu`. |
-| "Se requiere actualización" en Netflix | Usar Electron CastLabs v38+ (Chrome 116+). El proyecto usa `v38.7.2+wvcus`. |
+| Issue | Solution |
+|-------|----------|
+| `libva error: i965_drv_video.so init failed` | The script already uses `LIBVA_DRIVER_NAME=iHD`. If it persists: `sudo apt install intel-media-va-driver-non-free`. |
+| "Failed to install Widevine" (404) | The app still opens. Netflix requires CastLabs Electron (included). |
+| Crash when opening Netflix | `npm start` already includes `--no-sandbox`. Without GPU: `electron . --no-sandbox --disable-gpu`. |
+| "Update required" on Netflix | Use CastLabs Electron v38+ (Chrome 116+). The project uses `v38.7.2+wvcus`. |
 
 ---
 
@@ -65,71 +65,71 @@ Se compila TypeScript, se abre la ventana y se muestra el menú de servicios. De
 npm run build
 ```
 
-Se genera la carpeta **`release/`** con:
+The **`release/`** folder is generated with:
 
-- **Linux:** AppImage (portable) y .deb. Instalación del .deb: `sudo dpkg -i release/catripplayer_*.deb`. El paquete incluye maintainer y metadatos .desktop correctos. Se generan al ejecutar el build en Linux.
-- **Windows:** instalador **NSIS** (.exe): asistente de instalación, elegir carpeta, acceso directo en escritorio y menú Inicio (x64). Para generarlo: `npm run build` en **Windows** o `npx electron-builder -c build/electron-builder.yml --win -p never` en Linux (cross-compile). Icono: `build/icon.ico`.
-- **macOS:** desde **Linux** o **Windows** se genera un **.zip** con la app (`release/CatripPlayer-x.x.x-mac.zip`); el usuario descomprime y arrastra la app a Aplicaciones. Para obtener un instalador **DMG** hay que ejecutar el build en **macOS** y descomentar la línea `dmg` en `build/electron-builder.yml`. Icono: `build/icon.png` (512×512 px).
+- **Linux:** AppImage (portable) and .deb. Install the .deb: `sudo dpkg -i release/catripplayer_*.deb`. The package includes maintainer and correct .desktop metadata. Built when running the build on Linux.
+- **Windows:** **NSIS** installer (.exe): setup wizard, choose folder, desktop and Start menu shortcut (x64). To build: `npm run build` on **Windows** or `npx electron-builder -c build/electron-builder.yml --win -p never` on Linux (cross-compile). Icon: `build/icon.ico`.
+- **macOS:** From **Linux** or **Windows** a **.zip** is generated (`release/CatripPlayer-x.x.x-mac.zip`); the user extracts and drags the app to Applications. To get a **DMG** installer, run the build on **macOS** and uncomment the `dmg` line in `build/electron-builder.yml`. Icon: `build/icon.png` (512×512 px).
 
-Los iconos están en **`build/`**: **`icon.png`** para Linux y macOS y **`icon.ico`** para Windows.
-
----
-
-## Uso
-
-| Acción | Cómo |
-|--------|------|
-| **Abrir un servicio** | Clic en la tarjeta del menú o en **Navegación** → nombre del servicio. |
-| **Volver al menú** | **Navegación** → Menú principal (Ctrl+H) o **Reproducción** → Volver al menú. |
-| **Abrir una URL cualquiera** | **Navegación** → URL personalizada… (Ctrl+O). Se abre un diálogo con el estilo de la app. |
-| **Cambiar idioma** | **Preferencias** → Idioma → elegir idioma (ES, EN, FR, PT, DE, ZH). La ventana se recarga para aplicar. |
-| **Ventana siempre encima** | **Preferencias** → Ventana → Siempre encima. |
-| **Ventana sin marco (Isla Flotante)** | **Preferencias** → Ventana → Ventana sin marco. La barra superior se convierte en una píldora centrada que se expande al pasar el ratón. |
-| **Bloquear anuncios** | **Preferencias** → Privacidad → Bloquear anuncios (requiere reinicio). |
-| **Mostrar u ocultar servicios** | **Preferencias** → Servicios → Servicios visibles → marcar o desmarcar cada uno. |
-| **Servicio al iniciar** | **Preferencias** → Servicios → Servicio al iniciar (Menú principal, Última página abierta o un servicio concreto). |
-| **Editar configuración a mano** | **Preferencias** → Editar configuración… (abre `config.json` en el editor del sistema). |
-| **Restablecer todo** | **Preferencias** → Restablecer preferencias. |
-| **Versión** | **Ayuda** → Acerca de CatripPlayer. |
+Icons are in **`build/`**: **`icon.png`** for Linux and macOS and **`icon.ico`** for Windows.
 
 ---
 
-## Servicios incluidos
+## Usage
 
-Por defecto están disponibles: **Netflix**, **YouTube**, **Twitch**, **Amazon Prime Video**, **HBO Max**, **Apple TV**, **Crunchyroll**, **Disney+**, **Floatplane**, etc. La visibilidad de cada uno se controla en **Preferencias → Servicios → Servicios visibles**.
+| Action | How |
+|--------|-----|
+| **Open a service** | Click the card in the menu or **Navigation** → service name. |
+| **Back to menu** | **Navigation** → Main menu (Ctrl+H) or **Playback** → Back to menu. |
+| **Open any URL** | **Navigation** → Custom URL… (Ctrl+O). A dialog with the app’s style opens. |
+| **Change language** | **Preferences** → Language → choose language (ES, EN, FR, PT, DE, ZH). The window reloads to apply. |
+| **Always on top** | **Preferences** → Window → Always on top. |
+| **Frameless window (Floating Island)** | **Preferences** → Window → Frameless window. The top bar becomes a centered pill that expands on hover. |
+| **Block ads** | **Preferences** → Privacy → Block ads (requires restart). |
+| **Show or hide services** | **Preferences** → Services → Visible services → check or uncheck each. |
+| **Service on startup** | **Preferences** → Services → Service on startup (Main menu, Last opened page, or a specific service). |
+| **Edit config manually** | **Preferences** → Edit configuration… (opens `config.json` in the system editor). |
+| **Reset all** | **Preferences** → Reset preferences. |
+| **Version** | **Help** → About CatripPlayer. |
 
 ---
 
-## Estructura del proyecto
+## Included services
+
+By default **Netflix**, **YouTube**, **Twitch**, **Amazon Prime Video**, **HBO Max**, **Apple TV**, **Crunchyroll**, **Disney+**, **Floatplane**, etc. are available. Visibility is controlled under **Preferences → Services → Visible services**.
+
+---
+
+## Project structure
 
 ```
 CatripPlayer/
 ├── src/
-│   ├── main.ts              # Proceso principal Electron
-│   ├── menu.ts              # Menú nativo (CatripPlayer, Navegación, Reproducción, Preferencias, Ayuda)
-│   ├── i18n.ts              # Internacionalización (locale, t, getUIStrings)
-│   ├── default-services.ts  # Lista de servicios por defecto
-│   ├── preload.ts           # Preload (expone IPC al renderer)
-│   ├── client-header.js     # Barra inyectada en modo sin marco (Isla Flotante)
-│   ├── bootstrap.js         # Punto de entrada (Widevine, etc.)
-│   ├── locales/             # Traducciones (es, en, fr, pt, de, zh)
+│   ├── main.ts              # Main Electron process
+│   ├── menu.ts              # Native menu (CatripPlayer, Navigation, Playback, Preferences, Help)
+│   ├── i18n.ts              # Internationalization (locale, t, getUIStrings)
+│   ├── default-services.ts  # Default service list
+│   ├── preload.ts           # Preload (exposes IPC to renderer)
+│   ├── client-header.js     # Injected bar in frameless mode (Floating Island)
+│   ├── bootstrap.js         # Entry point (Widevine, etc.)
+│   ├── locales/             # Translations (es, en, fr, pt, de, zh)
 │   │   ├── es.json
 │   │   ├── en.json
 │   │   └── ...
 │   └── ui/
-│       ├── index.html       # Menú principal (selector de servicios)
-│       ├── index.css        # Estilos (Evolución Aura, mesh gradient, tarjetas)
-│       ├── index.js         # Lógica del menú (paralaje, morphing, loader, cadenas i18n)
-│       ├── url-dialog.html  # Diálogo URL personalizada (estilo de la app)
+│       ├── index.html       # Main menu (service selector)
+│       ├── index.css        # Styles (Aura evolution, mesh gradient, cards)
+│       ├── index.js         # Menu logic (parallax, morphing, loader, i18n strings)
+│       ├── url-dialog.html  # Custom URL dialog (app style)
 │       ├── url-dialog.css
 │       ├── url-dialog.js
 │       ├── logo.png
-│       └── services/        # Iconos por servicio (SVG)
+│       └── services/        # Icons per service (SVG)
 ├── build/
-│   ├── electron-builder.yml # Configuración de empaquetado (Linux, Windows, macOS)
+│   ├── electron-builder.yml # Packaging config (Linux, Windows, macOS)
 │   ├── icon.png
 │   └── icon.ico
-├── docs/                    # Plan de desarrollo, internacionalización, menús, etc.
+├── docs/                    # Development plan, i18n, menus, etc.
 ├── LICENSE                  # GNU GPL v3.0
 ├── package.json
 ├── tsconfig.json
@@ -138,20 +138,20 @@ CatripPlayer/
 
 ---
 
-## Stack técnico
+## Tech stack
 
-| Componente   | Tecnología |
-|-------------|------------|
-| Runtime     | Node.js (Electron) |
-| Lenguaje    | TypeScript (main), HTML/CSS/JS (UI) |
-| UI          | `src/ui/` (menú, diálogo URL, estilos Aura) |
-| i18n        | JSON en `src/locales/` (es, en, fr, pt, de, zh), módulo `src/i18n.ts` |
-| Persistencia| electron-store (`config.json` en userData) |
-| DRM         | Electron CastLabs (Widevine), `v38.7.2+wvcus` |
-| Empaquetado | electron-builder (Linux: AppImage, deb; Windows: NSIS; macOS: zip/dmg) |
+| Component  | Technology |
+|------------|------------|
+| Runtime    | Node.js (Electron) |
+| Language   | TypeScript (main), HTML/CSS/JS (UI) |
+| UI         | `src/ui/` (menu, URL dialog, Aura styles) |
+| i18n       | JSON in `src/locales/` (es, en, fr, pt, de, zh), module `src/i18n.ts` |
+| Persistence| electron-store (`config.json` in userData) |
+| DRM        | Electron CastLabs (Widevine), `v38.7.2+wvcus` |
+| Packaging  | electron-builder (Linux: AppImage, deb; Windows: NSIS; macOS: zip/dmg) |
 
 ---
 
-## Licencia
+## License
 
-GNU General Public License v3.0 (GPL-3.0). Ver [LICENSE](LICENSE) para el texto completo.
+GNU General Public License v3.0 (GPL-3.0). See [LICENSE](LICENSE) for the full text.
