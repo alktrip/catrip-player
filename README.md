@@ -1,5 +1,9 @@
 # CatripPlayer
 
+<p align="center">
+  <img src="docs/images/logo.png" alt="CatripPlayer logo" width="120">
+</p>
+
 Unified streaming client for desktop. One window for Netflix, YouTube, Twitch, Amazon Prime Video, HBO Max, Apple TV, Crunchyroll, Disney+ and more. Built with **Electron** and **TypeScript** (Linux, Windows, and macOS).
 
 ![Version](https://img.shields.io/badge/version-1.1.1-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
@@ -18,6 +22,20 @@ CatripPlayer is a desktop app that centralizes access to video streaming platfor
 - **Persistent** preferences and last-used service (electron-store).
 - **Custom URL** via a dialog that matches the app’s visual style (not a native system window).
 - **Edit configuration:** Preferences → Edit configuration… opens the app’s `config.json` in the system editor.
+
+---
+
+## Screenshots
+
+| Main menu | Custom URL dialog |
+|-----------|-------------------|
+| Service grid with quick access to streaming platforms. | Dialog to open any URL (Navigation → Custom URL… or Ctrl+O). |
+| ![Main window](docs/images/main_window.png) | ![Custom URL](docs/images/custom_url.png) |
+
+| Amazon Prime Video | YouTube |
+|--------------------|---------|
+| Window showing the Amazon Prime Video service. | Window showing the YouTube service. |
+| ![Amazon Prime Video](docs/images/prime.png) | ![YouTube](docs/images/youtube.png) |
 
 ---
 
