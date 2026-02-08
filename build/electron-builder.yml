@@ -4,8 +4,6 @@
 appId: io.catrip.CatripPlayer
 productName: CatripPlayer
 copyright: Copyright © 2025
-# License name for Linux packages (deb, etc.); shown in package info
-license: GPL-3.0
 
 mac:
   category: public.app-category.video
