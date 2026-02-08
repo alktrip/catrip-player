@@ -1,0 +1,68 @@
+# Changelog
+
+All notable changes to CatripPlayer are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.1.1] - 2025-02-06
+
+### Added
+
+- **Screenshots** in README: logo, main window, Custom URL dialog, Amazon Prime Video, and YouTube.
+- **License metadata** for Linux (.deb) build so package info shows GPL-3.0 correctly.
+- **docs/images/** folder with application logo and window screenshots for documentation.
+
+### Changed
+
+- **License:** project switched from MIT to **GPL-3.0**; added `LICENSE` file with full GNU GPL v3 text.
+- **README.md** translated to English and restructured with logo and screenshot section.
+- **package.json:** `homepage` set to `https://github.com/alktrip/catrip-player`; `license` set to `GPL-3.0`.
+- **build/electron-builder.yml:** maintainer email set to GitHub noreply; explicit `license: GPL-3.0` for Linux packages.
+- **docs/electron-vaapi-fix.md** translated to English.
+
+---
+
+## [1.1.0] - 2025-02
+
+### Added
+
+- **Internationalization (i18n):** Spanish (es), English (en), French (fr), Portuguese (pt), German (de), and Chinese (zh).
+- **Preferences → Language** submenu to choose UI language; selection is persisted and applied after window reload.
+- **Custom URL dialog** with the app’s visual style (replaces native prompt); no menu bar on the dialog window.
+- **Locale files** in `src/locales/` (JSON) and `src/i18n.ts` for `getLocale`, `setLocale`, `t()`, and `getUIStrings`.
+- **UI strings** sent to the renderer via `set-services` payload so the main menu, empty state, “Last used” badge, version prefix, and loader text are translated.
+- **Island (frameless) bar** “Back to menu” label translated via `island.backToMenu`.
+- **Prompt strings** for Custom URL dialog: title, label, placeholder, cancel, and submit buttons in all supported languages.
+
+### Changed
+
+- **Menu** refactored to use `t()` for all labels; submenu **Preferences → Language** added with radio options per locale.
+- **About** and **Custom URL** use translated strings; on language change, menu is rebuilt and window reloaded.
+- **main.ts:** initializes i18n, passes `t` and `onLocaleChange` to `buildMenu`, injects translated overlay and island strings.
+- **src/ui/index.js:** uses `payload.strings` for header, empty state, version prefix, “Last used,” and connecting loader text.
+
+### Removed
+
+- **electron-prompt** dependency; Custom URL is handled by an in-app styled dialog.
+
+---
+
+## [1.0.0] - 2025-01
+
+### Added
+
+- **Unified streaming client** for desktop: one window for Netflix, YouTube, Twitch, Amazon Prime Video, HBO Max, Apple TV, Crunchyroll, Disney+, and others.
+- **Service menu** with visual grid (Aura evolution: mesh gradient, ambient lighting, parallax, animations).
+- **Single window** loading the chosen service website with **Widevine (DRM)** support on Linux (CastLabs Electron).
+- **Window options:** always on top, frameless (Floating Island), full screen, remember position and size.
+- **Optional ad blocking** (Ghostery).
+- **Preferences:** visible services, default/startup service, edit config file; **Navigation** (main menu, custom URL, service shortcuts); **Playback** (back to menu, reload, always on top, full screen).
+- **Persistence** of preferences and last-used service (electron-store).
+- **Build** for Linux (AppImage, .deb), Windows (NSIS), and macOS (zip).
+- **docs/electron-vaapi-fix.md** for libva/i965 vs iHD driver on Intel (e.g. Iris Xe / Tiger Lake).
+
+---
+
+[1.1.1]: https://github.com/alktrip/catrip-player/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/alktrip/catrip-player/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/alktrip/catrip-player/releases/tag/v1.0.0
