@@ -2,10 +2,10 @@
   "name": "catripplayer",
   "version": "1.1.1",
   "description": "Cliente unificado de streaming para escritorio (Electron).",
-  "homepage": "https://github.com/catrip/catripplayer",
+  "homepage": "https://github.com/alktrip/catrip-player",
   "main": "dist/bootstrap.js",
   "author": "Catrip",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "scripts": {
     "compile": "tsc && cp src/bootstrap.js dist/",
     "start": "npm run compile && LIBVA_DRIVER_NAME=iHD electron . --no-sandbox --in-process-gpu",

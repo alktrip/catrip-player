@@ -19,7 +19,7 @@ linux:
   target:
     - AppImage
     - deb
-  maintainer: "Catrip <catrip@noreply.github.com>"
+  maintainer: "alktrip <28909768+alktrip@users.noreply.github.com>"
   synopsis: Cliente unificado de streaming para escritorio
   description: Cliente unificado de streaming para escritorio (Netflix, YouTube, Twitch, etc.) en una única ventana.
   icon: build/icons
