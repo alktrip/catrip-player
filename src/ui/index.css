@@ -1,0 +1,425 @@
+/* --- Sistema de diseño (Fase 1 + Fase 2 §10) --- */
+:root {
+  /* Tipografía */
+  --font-title: 1.4rem;
+  --font-title-weight: 600;
+  --font-subtitle: 1.1rem;
+  --font-subtitle-weight: 500;
+  --font-base: 0.95rem;
+  --font-secondary: 0.85rem;
+  --font-secondary-weight: 400;
+  /* Color acento (identidad de la app) */
+  --accent: #2563eb;
+  /* Fondos y texto */
+  --bg-page: #1a1a1a;
+  --text-primary: #e5e5e5;
+  --text-secondary: rgba(229, 229, 229, 0.85);
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  /* Curvas y transiciones (§4.1) */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s var(--ease-standard);
+  --transition-smooth: 0.25s var(--ease-standard);
+  /* Espaciado formal (§10) */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: var(--font-base);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: var(--space-sm);
+  overflow-x: hidden;
+  transition: opacity var(--transition-fast);
+  position: relative;
+}
+
+/* Evolución Aura: Mesh gradient + capa ambiental */
+.aura-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.aura-mesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(37, 99, 235, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 80% at 80% 60%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 60% at 50% 90%, rgba(219, 39, 119, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at top center, #1f1f1f 0%, #1a1a1a 60%);
+}
+
+.ambient-layer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 80vmax at var(--ambient-x, 50%) var(--ambient-y, 50%),
+    var(--ambient-color, transparent) 0%,
+    transparent 50%
+  );
+  opacity: var(--ambient-opacity, 0);
+  transition: opacity 0.4s var(--ease-standard);
+}
+
+.menu-content,
+.empty-state,
+.services,
+.menu-version {
+  position: relative;
+  z-index: 1;
+}
+
+body.loading {
+  pointer-events: none;
+}
+
+body.menu-fade-out {
+  opacity: 0;
+}
+
+/* --- §4.2 Animación de entrada del menú --- */
+.menu-content {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.12s var(--ease-standard), transform 0.12s var(--ease-standard);
+}
+
+body.menu-ready .menu-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Encabezado menú principal --- */
+.menu-header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.menu-header .logo {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+
+.menu-header h1 {
+  font-size: var(--font-title);
+  font-weight: var(--font-title-weight);
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.menu-header p {
+  font-size: var(--font-subtitle);
+  font-weight: var(--font-subtitle-weight);
+  color: var(--text-secondary);
+}
+
+/* --- Cuadrícula y tarjetas (§5.1 densidad 160px) --- */
+.services {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-sm);
+  max-width: 900px;
+  margin: 0 auto;
+  list-style: none;
+}
+
+.service {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--transition-fast), transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: service-enter 0.4s var(--ease-standard) forwards;
+}
+
+.service-enter {
+  /* stagger aplicado por JS con animation-delay */
+}
+
+@keyframes service-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--service-color, transparent);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.service:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-4px);
+  box-shadow: var(--card-hover-shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 0 32px var(--service-glow, rgba(255, 255, 255, 0.04));
+}
+.service:hover .service-logo-wrap {
+  box-shadow: 0 0 14px var(--service-logo-glow, rgba(255, 255, 255, 0.2));
+}
+
+.service:hover::after {
+  opacity: 1;
+}
+
+.service:active {
+  transform: translateY(-2px);
+}
+
+/* §11 Indicador de foco refinado */
+.service:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+/* Último servicio usado (§3.3) */
+.service--last::after {
+  opacity: 1;
+  background: var(--service-color, var(--accent));
+}
+
+.service.service--last .service-badge {
+  display: block;
+}
+
+/* §6 Refinamiento badge "Último" */
+.service-badge {
+  display: none;
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-xs);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  animation: badge-enter 0.2s var(--ease-standard);
+}
+
+@keyframes badge-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.service-logo-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s var(--ease-standard);
+}
+
+.service img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.service h3 {
+  font-size: var(--font-secondary);
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+/* --- Loader (§4: duración 1.1s, blur, transiciones) --- */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: loader-fade-in 0.15s var(--ease-standard);
+}
+
+.loader-inner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: top var(--transition-smooth), left var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.loader .ripple {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: ripple-pulse 1.1s ease-in-out infinite;
+}
+
+/* Ripple 2.0: partículas que se disuelven */
+.loader-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: particle-dissolve 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes particle-dissolve {
+  0% {
+    transform: scale(0.5) translate(-50%, -50%) translate(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5) translate(-50%, -50%) translate(var(--px), var(--py));
+    opacity: 0;
+  }
+}
+
+/* Morphing: logo que vuela al centro */
+.morph-logo {
+  position: fixed;
+  z-index: 10000;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+  transition: left 0.3s var(--ease-standard), top 0.3s var(--ease-standard), transform 0.3s var(--ease-standard);
+  pointer-events: none;
+}
+
+/* §9.1 drop-shadow en logo */
+.loader img {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+}
+
+.loader-text {
+  position: absolute;
+  bottom: calc(50% - 70px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+  font-size: var(--font-secondary);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes loader-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* §3 Estado vacío (sin servicios visibles) */
+.empty-state {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+  opacity: 0.7;
+}
+
+.empty-state h2 {
+  font-size: var(--font-subtitle);
+  font-weight: var(--font-subtitle-weight);
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.empty-state p {
+  font-size: var(--font-secondary);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+/* §12 Versión discreta */
+.menu-version {
+  position: fixed;
+  bottom: var(--space-xs);
+  left: var(--space-xs);
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* §9.2 ripple escala máx 1.12 */
+@keyframes ripple-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.12); opacity: 0.2; }
+}

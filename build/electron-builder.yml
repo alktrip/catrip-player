@@ -1,0 +1,70 @@
+# CatripPlayer — empaquetado Linux, Windows y macOS
+# Electron: CastLabs build con Widevine (v38.7.2+wvcus) para Linux/Windows; macOS usa build estándar si se construye en Mac.
+
+appId: io.catrip.CatripPlayer
+productName: CatripPlayer
+copyright: Copyright © 2025
+
+mac:
+  category: public.app-category.video
+  target:
+    - zip
+    # - dmg   # Solo en macOS: 'dmg' requiere el módulo nativo dmg-license (no disponible en Linux). Desde Linux se genera .zip; en Mac descomenta esta línea para obtener también .dmg.
+  icon: build/icon.png
+  hardenedRuntime: true
+  gatekeeperAssess: false
+
+linux:
+  category: Video
+  target:
+    - AppImage
+    - deb
+  maintainer: "Catrip <catrip@noreply.github.com>"
+  synopsis: Cliente unificado de streaming para escritorio
+  description: Cliente unificado de streaming para escritorio (Netflix, YouTube, Twitch, etc.) en una única ventana.
+  icon: build/icons
+  desktop:
+    entry:
+      Icon: /opt/CatripPlayer/icon.png
+      Comment: Cliente unificado de streaming para escritorio (Netflix, YouTube, Twitch, etc.)
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    # - portable   # descomenta para generar también .exe portable (sin instalador)
+  icon: build/icon.ico
+  requestedExecutionLevel: asInvoker
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: CatripPlayer
+  license: ""
+  deleteAppDataOnUninstall: false
+
+# Usar build de Electron con Widevine (CastLabs)
+electronDownload:
+  mirror: https://github.com/castlabs/electron-releases/releases/download/v
+
+# Incluir código compilado y UI en el paquete
+files:
+  - dist
+  - src
+# Icono en la raíz de la app para que el .desktop lo encuentre en Linux
+extraFiles:
+  - from: build/icon.png
+    to: icon.png
+
+directories:
+  output: release
+  buildResources: build
+
+# No subir a ningún servidor (build local)
+publish: null

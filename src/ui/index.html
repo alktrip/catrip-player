@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;">
+  <title>CatripPlayer</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="aura-bg" aria-hidden="true">
+    <div class="aura-mesh"></div>
+    <div class="ambient-layer" id="ambient-layer"></div>
+  </div>
+  <main class="menu-content" id="menu-content">
+    <header class="menu-header" aria-label="Encabezado del menú">
+      <img class="logo" src="logo.png" alt="CatripPlayer" width="48" height="48">
+      <h1>Selecciona un servicio</h1>
+      <p>Accede rápidamente a tus plataformas favoritas</p>
+    </header>
+    <div class="services" role="list"></div>
+    <div class="empty-state" id="empty-state" hidden aria-live="polite">
+      <div class="empty-state-icon" aria-hidden="true">◇</div>
+      <h2>Ningún servicio visible</h2>
+      <p>Activa servicios en <strong>Ajustes → Servicios visibles</strong> para verlos aquí.</p>
+    </div>
+  </main>
+  <span class="menu-version" id="menu-version" aria-hidden="true"></span>
+  <script src="index.js"></script>
+</body>
+</html>

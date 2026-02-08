@@ -1,0 +1,27 @@
+{
+  "name": "catripplayer",
+  "version": "1.1.1",
+  "description": "Cliente unificado de streaming para escritorio (Electron).",
+  "homepage": "https://github.com/catrip/catripplayer",
+  "main": "dist/bootstrap.js",
+  "author": "Catrip",
+  "license": "MIT",
+  "scripts": {
+    "compile": "tsc && cp src/bootstrap.js dist/",
+    "start": "npm run compile && LIBVA_DRIVER_NAME=iHD electron . --no-sandbox --in-process-gpu",
+    "build": "npm run compile && electron-builder -c build/electron-builder.yml -p never"
+  },
+  "dependencies": {
+    "@ghostery/adblocker-electron": "^2.11.3",
+    "cross-fetch": "^4.0.0",
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "github:castlabs/electron-releases#v38.7.2+wvcus",
+    "electron-builder": "^26.7.0",
+    "typescript": "^5.6.3"
+  },
+  "build": {
+    "extends": "./build/electron-builder.yml"
+  }
+}

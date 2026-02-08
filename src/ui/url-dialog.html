@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;">
+  <title></title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="url-dialog.css">
+</head>
+<body>
+  <div class="aura-bg" aria-hidden="true">
+    <div class="aura-mesh"></div>
+  </div>
+  <main class="url-dialog" id="url-dialog" role="dialog" aria-labelledby="url-dialog-title" aria-modal="true">
+    <h1 class="url-dialog-title" id="url-dialog-title"></h1>
+    <form class="url-dialog-form" id="url-form" novalidate>
+      <label for="url-input" class="url-dialog-label" id="url-label"></label>
+      <input type="url" id="url-input" class="url-dialog-input" placeholder="" autocomplete="url" enterkeyhint="go">
+      <div class="url-dialog-actions">
+        <button type="button" class="url-dialog-btn url-dialog-btn--secondary" id="btn-cancel"></button>
+        <button type="submit" class="url-dialog-btn url-dialog-btn--primary" id="btn-submit"></button>
+      </div>
+    </form>
+  </main>
+  <script src="url-dialog.js"></script>
+</body>
+</html>
