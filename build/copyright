@@ -1,0 +1,13 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: CatripPlayer
+Source: https://github.com/alktrip/catrip-player
+
+Files: *
+Copyright: 2025 Catrip
+License: GPL-3.0
+ .
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 3 of the License.
+ .
+ The full text of the license is in /usr/share/common-licenses/GPL-3.

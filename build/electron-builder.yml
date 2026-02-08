@@ -23,9 +23,15 @@ linux:
   synopsis: Cliente unificado de streaming para escritorio
   description: Cliente unificado de streaming para escritorio (Netflix, YouTube, Twitch, etc.) en una única ventana.
   icon: build/icons
+
+# Licencia GPL-3.0 en el .deb para que el Centro de software la muestre (archivo copyright DEP-5)
+deb:
+  fpm:
+    - "build/copyright=/usr/share/doc/catripplayer/copyright"
+  # No fijar Icon aquí: electron-builder instala iconos en /usr/share/icons/hicolor y el
+  # Centro de software los encuentra por el nombre por defecto (ejecutable).
   desktop:
     entry:
-      Icon: /opt/CatripPlayer/icon.png
       Comment: Cliente unificado de streaming para escritorio (Netflix, YouTube, Twitch, etc.)
 
 win:
