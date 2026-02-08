@@ -1,46 +1,46 @@
-# Solución: Error libva en Electron (Intel Iris Xe / Tiger Lake)
+# Fix: libva Error in Electron (Intel Iris Xe / Tiger Lake)
 
-## El Problema
+## The Problem
 ```
 libva error: /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so init failed
 ```
 
-Este error ocurre porque Electron intenta usar el driver VA-API incorrecto (`i965`) para GPUs Intel modernas (Gen8+).
+This error occurs because Electron tries to use the wrong VA-API driver (`i965`) for modern Intel GPUs (Gen8+).
 
-## Cómo lo resuelve CatripPlayer
+## How CatripPlayer Fixes It
 
-- **Con `npm start`:** El script en `package.json` exporta `LIBVA_DRIVER_NAME=iHD` antes de lanzar Electron, así el binario recibe la variable al iniciar (libva se carga antes de ejecutar nuestro JS).
-- **Bootstrap:** Se mantiene `dist/bootstrap.js` como entrada para que, en el futuro, el AppImage pueda usar un wrapper que exporte la variable; en desarrollo lo que realmente evita el error es el script `start`.
+- **With `npm start`:** The script in `package.json` exports `LIBVA_DRIVER_NAME=iHD` before launching Electron, so the binary receives the variable at startup (libva loads before our JS runs).
+- **Bootstrap:** `dist/bootstrap.js` remains the entry point so that, in the future, the AppImage can use a wrapper that exports the variable; in development, what actually avoids the error is the `start` script.
 
-## Otras opciones (por si acaso)
+## Other Options (if needed)
 
-### 1. Instalar el driver correcto (recomendado en el sistema)
+### 1. Install the correct driver (recommended on the system)
 ```bash
 sudo apt install intel-media-va-driver-non-free
 ```
 
-### 2. Variable de entorno manual
+### 2. Set the environment variable manually
 ```bash
 LIBVA_DRIVER_NAME=iHD npm start
-# o para el AppImage:
+# or for the AppImage:
 LIBVA_DRIVER_NAME=iHD ./CatripPlayer-*.AppImage
 ```
 
-### 3. Verificar que VA-API usa iHD
+### 3. Verify that VA-API is using iHD
 ```bash
 LIBVA_DRIVER_NAME=iHD LIBVA_MESSAGING_LEVEL=1 npm start
 ```
-Deberías ver algo como:
+You should see something like:
 ```
 libva info: Trying to open .../iHD_drv_video.so
 libva info: va_openDriver() returns 0
 ```
 
-## Referencia de drivers Intel
+## Intel Driver Reference
 
-| GPU | Driver | Paquete |
+| GPU | Driver | Package |
 |-----|--------|---------|
-| Gen 5-9 (Ironlake - Coffee Lake) | i965 | `i965-va-driver` |
-| Gen 8+ (Broadwell - Tiger Lake+) | iHD | `intel-media-va-driver` |
+| Gen 5–9 (Ironlake – Coffee Lake) | i965 | `i965-va-driver` |
+| Gen 8+ (Broadwell – Tiger Lake+) | iHD | `intel-media-va-driver` |
 
-GPU **Iris Xe (Tiger Lake)** → driver **iHD**.
+**Iris Xe (Tiger Lake)** GPU → **iHD** driver.
