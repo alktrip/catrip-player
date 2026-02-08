@@ -37,6 +37,8 @@
   "about.title": "关于 CatripPlayer",
   "about.message": "CatripPlayer",
   "about.detail": "版本 {version}。\n\n桌面端统一流媒体客户端（Netflix、YouTube、Twitch 等）。",
+  "about.close": "关闭",
+  "about.githubLink": "在 GitHub 上查看",
   "prompt.openUrl.title": "打开 URL",
   "prompt.openUrl.label": "URL：",
   "prompt.openUrl.placeholder": "https://example.org",

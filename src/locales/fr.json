@@ -37,6 +37,8 @@
   "about.title": "À propos de CatripPlayer",
   "about.message": "CatripPlayer",
   "about.detail": "Version {version}.\n\nClient de streaming unifié pour ordinateur (Netflix, YouTube, Twitch, etc.).",
+  "about.close": "Fermer",
+  "about.githubLink": "Voir sur GitHub",
   "prompt.openUrl.title": "Ouvrir une URL",
   "prompt.openUrl.label": "URL :",
   "prompt.openUrl.placeholder": "https://exemple.org",

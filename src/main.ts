@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, session } from 'electron';
+import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import Store from 'electron-store';
@@ -20,6 +20,7 @@ interface AppStore {
 
 let mainWindow: BrowserWindow | null = null;
 let urlDialogWindow: BrowserWindow | null = null;
+let aboutDialogWindow: BrowserWindow | null = null;
 let windowCreated = false;
 let defaultUserAgent = '';
 let currentServices: Service[] = [];
@@ -219,6 +220,66 @@ function openUrlDialog(strings: { title: string; label: string; placeholder: str
   }).catch(() => cleanup());
 }
 
+function openAboutDialog(strings: {
+  title: string;
+  message: string;
+  detail: string;
+  closeLabel: string;
+  githubLabel: string;
+  githubUrl: string;
+}): void {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  if (aboutDialogWindow && !aboutDialogWindow.isDestroyed()) {
+    aboutDialogWindow.focus();
+    return;
+  }
+  const parent = mainWindow;
+  aboutDialogWindow = new BrowserWindow({
+    width: 496,
+    height: 420,
+    parent,
+    modal: true,
+    show: false,
+    frame: false,
+    resizable: false,
+    fullscreen: false,
+    title: strings.title,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false,
+    },
+  });
+  aboutDialogWindow.setMenu(null);
+  const cleanup = (): void => {
+    if (aboutDialogWindow) {
+      aboutDialogWindow.removeAllListeners('closed');
+      aboutDialogWindow = null;
+    }
+    ipcMain.removeAllListeners('about-dialog-close');
+    ipcMain.removeAllListeners('about-dialog-open-external');
+  };
+  ipcMain.once('about-dialog-close', (_e) => {
+    if (_e.sender !== aboutDialogWindow?.webContents) return;
+    aboutDialogWindow?.close();
+    cleanup();
+  });
+  ipcMain.once('about-dialog-open-external', (_e, url: string) => {
+    if (_e.sender !== aboutDialogWindow?.webContents) return;
+    const u = typeof url === 'string' ? url.trim() : '';
+    if (u) shell.openExternal(u).catch(() => {});
+  });
+  aboutDialogWindow.once('closed', () => cleanup());
+  const dialogPath = path.join(getBasePath(), 'src', 'ui', 'about-dialog.html');
+  aboutDialogWindow.loadFile(dialogPath).then(() => {
+    setImmediate(() => {
+      aboutDialogWindow?.webContents.send('about-dialog-strings', strings);
+      aboutDialogWindow?.show();
+    });
+  }).catch(() => cleanup());
+}
+
 async function createWindow(): Promise<void> {
   if (windowCreated) return;
   windowCreated = true;
@@ -280,6 +341,7 @@ async function createWindow(): Promise<void> {
       t: (key, params) => i18n.t(store, key, params),
       onLocaleChange,
       openUrlDialog: (strings) => openUrlDialog(strings),
+      openAboutDialog: (strings) => openAboutDialog(strings),
     });
   };
   buildMenu({
@@ -295,6 +357,7 @@ async function createWindow(): Promise<void> {
     t: (key, params) => i18n.t(store, key, params),
     onLocaleChange,
     openUrlDialog: (strings) => openUrlDialog(strings),
+    openAboutDialog: (strings) => openAboutDialog(strings),
   });
 
   mainWindow.once('ready-to-show', () => {
@@ -498,6 +561,7 @@ ipcMain.on('exit-fullscreen', () => {
       if (mainWindow && !mainWindow.isDestroyed()) mainWindow.reload();
     },
     openUrlDialog: (strings) => openUrlDialog(strings),
+    openAboutDialog: (strings) => openAboutDialog(strings),
   });
   if (mainWindow && !mainWindow.isDestroyed()) {
     const u = mainWindow.webContents.getURL();

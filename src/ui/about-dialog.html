@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;">
+  <title></title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="about-dialog.css">
+</head>
+<body>
+  <div class="aura-bg" aria-hidden="true">
+    <div class="aura-mesh"></div>
+  </div>
+  <main class="about-dialog" id="about-dialog" role="dialog" aria-labelledby="about-dialog-app" aria-modal="true">
+    <img class="about-dialog-logo" id="about-dialog-logo" src="logo.png" alt="">
+    <p class="about-dialog-app" id="about-dialog-app"></p>
+    <p class="about-dialog-detail" id="about-dialog-detail"></p>
+    <a href="#" class="about-dialog-link" id="about-dialog-github"></a>
+    <div class="about-dialog-actions">
+      <button type="button" class="about-dialog-btn about-dialog-btn--primary" id="btn-close"></button>
+    </div>
+  </main>
+  <script src="about-dialog.js"></script>
+</body>
+</html>

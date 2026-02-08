@@ -1,4 +1,4 @@
-import { Menu, shell, BrowserWindow, app, dialog } from 'electron';
+import { Menu, shell, BrowserWindow, app } from 'electron';
 import * as path from 'path';
 import type { Service } from './types';
 import { getLocale, setLocale, getUIStrings, SUPPORTED_LOCALES } from './i18n';
@@ -19,27 +19,13 @@ interface MenuParams {
   onLocaleChange?: () => void;
   /** Abrir diálogo de URL personalizada (estilo de la app) */
   openUrlDialog?: (strings: { title: string; label: string; placeholder: string; cancel: string; submit: string }) => void;
+  /** Abrir ventana Acerca de (estilo de la app, sin menús) */
+  openAboutDialog?: (strings: { title: string; message: string; detail: string; closeLabel: string; githubLabel: string; githubUrl: string }) => void;
 }
 
 function getOpt(store: MenuParams['store'], key: string, def: boolean | string): boolean | string {
   const v = store.get(key);
   return v === undefined ? def : (v as boolean | string);
-}
-
-function showAbout(
-  mainWindow: BrowserWindow | null,
-  version: string,
-  t: (key: string, params?: Record<string, string>) => string
-): void {
-  if (!mainWindow || mainWindow.isDestroyed()) return;
-  dialog
-    .showMessageBox(mainWindow, {
-      type: 'info',
-      title: t('about.title'),
-      message: t('about.message'),
-      detail: t('about.detail', { version }),
-    })
-    .catch(() => {});
 }
 
 export function buildMenu({
@@ -55,6 +41,7 @@ export function buildMenu({
   t,
   onLocaleChange,
   openUrlDialog,
+  openAboutDialog,
 }: MenuParams): void {
   const goToMenu = (): void => {
     if (!mainWindow || mainWindow.isDestroyed()) return;
@@ -253,7 +240,17 @@ export function buildMenu({
     {
       label: t('menu.help.title'),
       submenu: [
-        { label: t('menu.help.about'), click: () => showAbout(mainWindow, version, t) },
+        {
+          label: t('menu.help.about'),
+          click: () => openAboutDialog?.({
+            title: t('about.title'),
+            message: t('about.message'),
+            detail: t('about.detail', { version }),
+            closeLabel: t('about.close'),
+            githubLabel: t('about.githubLink'),
+            githubUrl: 'https://github.com/alktrip/catrip-player',
+          }),
+        },
       ],
     },
   ];
