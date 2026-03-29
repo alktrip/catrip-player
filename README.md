@@ -6,7 +6,7 @@
 
 Unified streaming client for desktop. One window for Netflix, YouTube, Twitch, Amazon Prime Video, HBO Max, Apple TV, Crunchyroll, Disney+ and more. Built with **Electron** and **TypeScript** (Linux, Windows, and macOS).
 
-![Version](https://img.shields.io/badge/version-1.1.2-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
+![Version](https://img.shields.io/badge/version-1.1.3-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 
 ---
 

@@ -4,6 +4,21 @@ All notable changes to CatripPlayer are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-03-28
+
+### Added
+
+- **Cursor rule** (`.cursor/rules/git-main-feature-branch.mdc`): when working on `main`, the agent should ask before implementing whether to use a `feature/…` branch.
+- **Service grid skeletons** while the menu loads, until the first `set-services` IPC payload.
+
+### Changed
+
+- **Aura UI:** service cards use a **gradient mesh border** tied to each service color; stronger hover glow.
+- **Logo morph** (launching a service): subtle **chromatic aberration** during the flight animation (`prefers-reduced-motion` respected).
+- **Floating island** (frameless mode): **gradient border and backdrop** with accent from `service.color` (valid hex).
+
+---
+
 ## [1.1.2] - 2025-02-08
 
 ### Added
@@ -77,6 +92,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+[1.1.3]: https://github.com/alktrip/catrip-player/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/alktrip/catrip-player/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/alktrip/catrip-player/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/alktrip/catrip-player/compare/v1.0.0...v1.1.0

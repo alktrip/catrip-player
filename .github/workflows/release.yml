@@ -1,0 +1,62 @@
+# Builds CatripPlayer on Linux, Windows and macOS when a version tag (v*) is pushed,
+# then uploads installers to a GitHub Release.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Linux — dependencies for electron-builder
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application (electron-builder)
+        run: npm run build
+        env:
+          # Avoid optional native signing noise on CI
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: ${{ matrix.os == 'ubuntu-latest' }}
+          fail_on_unmatched_files: false
+          files: |
+            release/*.AppImage
+            release/*.deb
+            release/*.exe
+            release/*mac*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
