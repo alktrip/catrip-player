@@ -1,0 +1,22 @@
+---
+description: En rama main, preguntar si crear rama feature antes de implementar
+alwaysApply: true
+---
+
+# Rama `main`: confirmar rama de trabajo
+
+Antes de **editar código**, **crear commits** o **implementar** una tarea que no sea solo lectura o respuesta informativa:
+
+1. Comprueba la rama actual del repositorio (por ejemplo: `git branch --show-current` o `git status -sb`).
+2. Si la rama es **`main`** o **`master`** (o el remoto equivalente por defecto del proyecto):
+   - **Detén el flujo de implementación** hasta tener respuesta del desarrollador.
+   - **Pregunta explícitamente** si desea crear una nueva rama de tipo `feature/…` (o el convencional del equipo) y trabajar ahí en lugar de en `main`.
+   - Si confirma que sí, sugiere un nombre breve derivado de la tarea (p. ej. `feature/aura-ui-skeletons`) y ejecuta los comandos git necesarios (`git checkout -b …`) salvo que pida lo contrario.
+3. Si ya está en otra rama (`feature/*`, `fix/*`, etc.), continúa sin esa pregunta.
+
+**Excepciones** (no hace falta preguntar por la rama):
+
+- Solo explicaciones, revisión de diff o lectura de archivos sin modificar.
+- El desarrollador indica claramente que **debe** hacerse en `main` (hotfix acordado, release, etc.).
+
+**Objetivo:** evitar commits de desarrollo directamente en `main` salvo decisión consciente del equipo.

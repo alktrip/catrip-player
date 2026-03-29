@@ -22,12 +22,19 @@
       '<span class="CatripPlayer-exit-btn" title="' + backToMenuLabel.replace(/"/g, '&quot;') + '" aria-label="' + backToMenuLabel.replace(/"/g, '&quot;') + '">×</span>' +
     '</div>' +
     '<style>' +
+    ':root{--catrip-island-accent:#6366f1;}' +
     '.CatripPlayer-island{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:2147483647;' +
     'display:flex;align-items:center;gap:0;padding:0 14px;height:40px;border-radius:999px;' +
-    'background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);' +
+    'border:1px solid transparent;background-clip:padding-box;' +
+    'background-image:linear-gradient(rgba(16,16,20,0.82),rgba(16,16,20,0.82)),' +
+    'linear-gradient(135deg,color-mix(in srgb,var(--catrip-island-accent) 75%,transparent) 0%,' +
+    'color-mix(in srgb,var(--catrip-island-accent) 35%,rgba(124,58,237,0.55)) 45%,rgba(255,255,255,0.22) 100%);' +
+    'background-origin:border-box;background-clip:padding-box,border-box;' +
+    'backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);' +
+    'box-shadow:0 4px 24px rgba(0,0,0,0.35),0 0 32px color-mix(in srgb,var(--catrip-island-accent) 22%,transparent);' +
     'cursor:grab;-webkit-app-region:drag;user-select:none;box-sizing:border-box;' +
     'max-width:280px;transition:max-width 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s;}' +
-    '.CatripPlayer-island:hover{max-width:360px;}' +
+    '.CatripPlayer-island:hover{max-width:360px;box-shadow:0 6px 28px rgba(0,0,0,0.4),0 0 40px color-mix(in srgb,var(--catrip-island-accent) 30%,transparent);}' +
     '.CatripPlayer-island-content{display:flex;align-items:center;justify-content:center;gap:8px;pointer-events:none;min-width:0;flex:1;}' +
     '.CatripPlayer-island .CatripPlayer-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}' +
     '.CatripPlayer-island .CatripPlayer-title{font-size:0.85rem;color:rgba(255,255,255,0.95);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
@@ -39,6 +46,12 @@
     '</style>';
   document.body.appendChild(wrap);
 
+  var islandEl = wrap.querySelector('.CatripPlayer-island');
+  if (islandEl) {
+    if (serviceColor && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(serviceColor.trim())) {
+      islandEl.style.setProperty('--catrip-island-accent', serviceColor.trim());
+    }
+  }
   var titleEl = wrap.querySelector('.CatripPlayer-title');
   if (titleEl) titleEl.textContent = serviceName;
   var dotEl = wrap.querySelector('.CatripPlayer-dot');
