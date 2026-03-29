@@ -5,6 +5,26 @@
 const { ipc } = window.catrip || {};
 const servicesEl = document.querySelector('.services');
 const ambientEl = document.getElementById('ambient-layer');
+const SKELETON_CARD_COUNT = 8;
+
+function injectInitialSkeletons() {
+  if (!servicesEl || servicesEl.dataset.hydrated === '1') return;
+  servicesEl.textContent = '';
+  for (let i = 0; i < SKELETON_CARD_COUNT; i++) {
+    const sk = document.createElement('div');
+    sk.className = 'service-skeleton';
+    sk.setAttribute('aria-hidden', 'true');
+    sk.style.animationDelay = i * 0.06 + 's';
+    const logo = document.createElement('div');
+    logo.className = 'service-skeleton-logo';
+    const text = document.createElement('div');
+    text.className = 'service-skeleton-text';
+    sk.appendChild(logo);
+    sk.appendChild(text);
+    servicesEl.appendChild(sk);
+  }
+  document.body.classList.add('menu-skeleton-phase', 'menu-ready');
+}
 
 function isLoading() {
   return document.body.classList.contains('loading');
@@ -68,7 +88,7 @@ function startMorphThenLoad(service, img, card) {
   const clone = document.createElement('img');
   clone.src = img.src;
   clone.alt = img.alt;
-  clone.className = 'morph-logo';
+  clone.className = 'morph-logo morph-logo--chroma';
   clone.style.left = rect.left + rect.width / 2 + 'px';
   clone.style.top = rect.top + rect.height / 2 + 'px';
   clone.style.transform = 'translate(-50%, -50%) scale(0.8)';
@@ -178,6 +198,8 @@ function renderServices(services, lastUsedService, appVersion, strings) {
   if (versionEl && appVersion != null) versionEl.textContent = versionPrefix + appVersion;
 
   if (!servicesEl) return;
+  document.body.classList.remove('menu-skeleton-phase');
+  servicesEl.dataset.hydrated = '1';
   servicesEl.textContent = '';
 
   if (visible.length === 0) {
@@ -271,3 +293,5 @@ if (ipc) {
     if (img) animateLoader(service, img);
   });
 }
+
+injectInitialSkeletons();

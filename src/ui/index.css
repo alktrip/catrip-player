@@ -150,10 +150,14 @@ body.menu-ready .menu-content {
   align-items: center;
   gap: 0.5rem;
   padding: 1rem;
+  --card-border-mesh-a: rgba(37, 99, 235, 0.38);
+  --card-border-mesh-b: rgba(124, 58, 237, 0.28);
+  --card-border-mesh-c: rgba(219, 39, 119, 0.22);
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--card-border);
+  border: 1px solid transparent;
+  background-clip: padding-box;
   border-radius: 12px;
   box-shadow: var(--card-shadow);
   text-decoration: none;
@@ -164,6 +168,33 @@ body.menu-ready .menu-content {
   opacity: 0;
   transform: translateY(10px);
   animation: service-enter 0.4s var(--ease-standard) forwards;
+}
+
+.service::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    125deg,
+    var(--card-border-mesh-a),
+    color-mix(in srgb, var(--service-color, #6366f1) 55%, transparent),
+    var(--card-border-mesh-b),
+    var(--card-border-mesh-c),
+    rgba(255, 255, 255, 0.14)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.35;
+  transition: opacity var(--transition-smooth);
+}
+
+.service:hover::before {
+  opacity: 1;
 }
 
 .service-enter {
@@ -192,7 +223,10 @@ body.menu-ready .menu-content {
 .service:hover {
   background: rgba(255, 255, 255, 0.08);
   transform: translateY(-4px);
-  box-shadow: var(--card-hover-shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 0 32px var(--service-glow, rgba(255, 255, 255, 0.04));
+  box-shadow:
+    var(--card-hover-shadow),
+    inset 0 0 32px var(--service-glow, rgba(255, 255, 255, 0.04)),
+    0 0 28px color-mix(in srgb, var(--service-color, transparent) 18%, transparent);
 }
 .service:hover .service-logo-wrap {
   box-shadow: 0 0 14px var(--service-logo-glow, rgba(255, 255, 255, 0.2));
@@ -348,6 +382,32 @@ body.menu-ready .menu-content {
   pointer-events: none;
 }
 
+/* Reverberación cromática sutil durante el vuelo del logo */
+.morph-logo--chroma {
+  animation: morph-chroma 0.45s ease-in-out infinite;
+}
+
+@keyframes morph-chroma {
+  0%,
+  100% {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.52)) drop-shadow(0 0 0 transparent);
+  }
+  33% {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.52)) drop-shadow(1.5px 0 0 rgba(255, 80, 100, 0.55))
+      drop-shadow(-1.5px 0 0 rgba(80, 200, 255, 0.45));
+  }
+  66% {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.52)) drop-shadow(-1px 0.5px 0 rgba(255, 120, 80, 0.4))
+      drop-shadow(1px -0.5px 0 rgba(100, 180, 255, 0.5));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .morph-logo--chroma {
+    animation: none;
+  }
+}
+
 /* §9.1 drop-shadow en logo */
 .loader img {
   position: relative;
@@ -416,6 +476,73 @@ body.menu-ready .menu-content {
   color: var(--text-secondary);
   opacity: 0.5;
   pointer-events: none;
+}
+
+/* Skeletons en la cuadrícula hasta el primer set-services */
+.menu-skeleton-phase .services {
+  min-height: 200px;
+}
+
+.service-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  animation: service-enter 0.35s var(--ease-standard) forwards;
+  pointer-events: none;
+}
+
+.service-skeleton-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+.service-skeleton-text {
+  width: 72%;
+  height: 0.75rem;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  animation-delay: 0.08s;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-skeleton-logo,
+  .service-skeleton-text {
+    animation: none;
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 
 /* §9.2 ripple escala máx 1.12 */
