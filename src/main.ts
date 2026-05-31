@@ -1,10 +1,17 @@
-import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, session, shell } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import Store from 'electron-store';
 import { buildMenu } from './menu';
-import { defaultServices } from './default-services';
 import * as i18n from './i18n';
+import {
+  listAvailableLogos,
+  mergeServices,
+  persistServicesFromManager,
+  servicesToManagerEntries,
+  validateServicesManagerPayload,
+} from './services-merge';
+import type { ServicesManagerSavePayload } from './services-merge';
 import type { Service } from './types';
 
 app.commandLine.appendSwitch('no-sandbox');
@@ -21,6 +28,7 @@ interface AppStore {
 let mainWindow: BrowserWindow | null = null;
 let urlDialogWindow: BrowserWindow | null = null;
 let aboutDialogWindow: BrowserWindow | null = null;
+let servicesManagerWindow: BrowserWindow | null = null;
 let windowCreated = false;
 let defaultUserAgent = '';
 let currentServices: Service[] = [];
@@ -40,28 +48,95 @@ function getOption<T>(key: string, def: T): T {
   return v === undefined ? def : (v as T);
 }
 
-function mergeServices(): Service[] {
-  const userServices: Partial<Service>[] = (store.get('services') as Partial<Service>[] | undefined) || [];
-  const result: Service[] = [];
+function refreshCurrentServices(): void {
+  currentServices = mergeServices(store);
+}
 
-  for (const d of defaultServices) {
-    const user = userServices.find((s) => s.name === d.name);
-    if (user) {
-      result.push({
-        name: user.name ?? d.name,
-        logo: user.logo ?? d.logo,
-        url: user.url ?? d.url,
-        color: user.color ?? d.color,
-        style: user.style ?? d.style ?? {},
-        userAgent: user.userAgent ?? d.userAgent,
-        permissions: user.permissions ?? d.permissions ?? [],
-        hidden: user.hidden !== undefined ? user.hidden : d.hidden,
-      });
-    } else {
-      result.push({ ...d, _defaultService: true });
-    }
+function getServicesManagerInitPayload(): {
+  strings: Record<string, string>;
+  services: ReturnType<typeof servicesToManagerEntries>;
+  order: string[];
+  availableLogos: string[];
+} {
+  return {
+    strings: i18n.getServicesManagerStrings(store),
+    services: servicesToManagerEntries(currentServices),
+    order: currentServices.map((s) => s.name),
+    availableLogos: listAvailableLogos(getBasePath()),
+  };
+}
+
+function validationErrorKey(code: string | null): string {
+  if (!code) return 'svcMgr.error.invalidPayload';
+  return 'svcMgr.error.' + code;
+}
+
+function openServicesManagerDialog(): void {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  if (servicesManagerWindow && !servicesManagerWindow.isDestroyed()) {
+    servicesManagerWindow.focus();
+    return;
   }
-  return result;
+
+  const parent = mainWindow;
+  servicesManagerWindow = new BrowserWindow({
+    width: 600,
+    height: 620,
+    parent,
+    modal: true,
+    show: false,
+    resizable: true,
+    minWidth: 480,
+    minHeight: 480,
+    fullscreen: false,
+    title: i18n.t(store, 'svcMgr.title'),
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false,
+    },
+  });
+  servicesManagerWindow.setMenu(null);
+
+  const cleanup = (): void => {
+    if (servicesManagerWindow) {
+      servicesManagerWindow.removeAllListeners('closed');
+      servicesManagerWindow = null;
+    }
+    ipcMain.removeAllListeners('services-manager-save');
+    ipcMain.removeAllListeners('services-manager-cancel');
+  };
+
+  ipcMain.once('services-manager-save', (_e, payload: ServicesManagerSavePayload) => {
+    if (_e.sender !== servicesManagerWindow?.webContents) return;
+    const err = validateServicesManagerPayload(payload);
+    if (err) {
+      servicesManagerWindow?.webContents.send('services-manager-error', validationErrorKey(err));
+      return;
+    }
+    persistServicesFromManager(store, payload);
+    refreshCurrentServices();
+    (app as NodeJS.EventEmitter).emit('refresh-services');
+    servicesManagerWindow?.close();
+    cleanup();
+  });
+
+  ipcMain.once('services-manager-cancel', (_e) => {
+    if (_e.sender !== servicesManagerWindow?.webContents) return;
+    servicesManagerWindow?.close();
+    cleanup();
+  });
+
+  servicesManagerWindow.once('closed', () => cleanup());
+
+  const dialogPath = path.join(getBasePath(), 'src', 'ui', 'services-manager.html');
+  servicesManagerWindow.loadFile(dialogPath).then(() => {
+    setImmediate(() => {
+      servicesManagerWindow?.webContents.send('services-manager-init', getServicesManagerInitPayload());
+      servicesManagerWindow?.show();
+    });
+  }).catch(() => cleanup());
 }
 
 let headerScript: string = '';
@@ -284,7 +359,7 @@ async function createWindow(): Promise<void> {
   if (windowCreated) return;
   windowCreated = true;
 
-  currentServices = mergeServices();
+  currentServices = mergeServices(store);
   await initAdblockIfNeeded();
 
   const hideFrame = getOption('options.hideWindowFrame', false);
@@ -342,6 +417,8 @@ async function createWindow(): Promise<void> {
       onLocaleChange,
       openUrlDialog: (strings) => openUrlDialog(strings),
       openAboutDialog: (strings) => openAboutDialog(strings),
+      goToMainMenu,
+      openServicesManagerDialog,
     });
   };
   buildMenu({
@@ -358,11 +435,22 @@ async function createWindow(): Promise<void> {
     onLocaleChange,
     openUrlDialog: (strings) => openUrlDialog(strings),
     openAboutDialog: (strings) => openAboutDialog(strings),
+    goToMainMenu,
+    openServicesManagerDialog,
   });
 
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
   });
+
+  if (hideFrame && process.platform !== 'darwin') {
+    mainWindow.webContents.on('before-input-event', (_event, input) => {
+      if (input.type !== 'keyDown' || input.key !== 'F10') return;
+      const menu = Menu.getApplicationMenu();
+      if (!menu || !mainWindow || mainWindow.isDestroyed()) return;
+      menu.popup({ window: mainWindow, x: 16, y: 8 });
+    });
+  }
 
   const relaunchToPage = store.get('relaunch.toPage') as string | undefined;
   const defaultService = getOption('options.defaultService', '') as string;
@@ -503,10 +591,20 @@ function getServicesPayload(): {
   };
 }
 
+function goToMainMenu(): void {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  mainWindow.webContents.userAgent = defaultUserAgent;
+  const indexPath = path.join(getBasePath(), 'src', 'ui', 'index.html');
+  mainWindow.loadFile(indexPath).then(() => {
+    mainWindow?.webContents.send('set-services', getServicesPayload());
+  }).catch((err) => console.error(err));
+}
+
 function resetSettings(): void {
   store.clear();
   store.set('version', app.getVersion());
   store.set('services', []);
+  store.delete('serviceOrder');
   const adblockPath = path.join(app.getPath('userData'), 'adblock-engine.bin');
   try {
     if (fs.existsSync(adblockPath)) fs.unlinkSync(adblockPath);
@@ -519,6 +617,10 @@ function resetSettings(): void {
 ipcMain.on('open-url', (_event, service: Service) => {
   if (!mainWindow || mainWindow.isDestroyed()) return;
   loadServiceUrl(service);
+});
+
+ipcMain.on('open-main-menu', () => {
+  goToMainMenu();
 });
 
 ipcMain.on('exit-fullscreen', () => {
@@ -544,7 +646,7 @@ ipcMain.on('exit-fullscreen', () => {
 });
 
 (app as NodeJS.EventEmitter).on('refresh-services', () => {
-  currentServices = mergeServices();
+  currentServices = mergeServices(store);
   buildMenu({
     store,
     app,
@@ -562,6 +664,8 @@ ipcMain.on('exit-fullscreen', () => {
     },
     openUrlDialog: (strings) => openUrlDialog(strings),
     openAboutDialog: (strings) => openAboutDialog(strings),
+    goToMainMenu,
+    openServicesManagerDialog,
   });
   if (mainWindow && !mainWindow.isDestroyed()) {
     const u = mainWindow.webContents.getURL();

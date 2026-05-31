@@ -21,6 +21,10 @@ interface MenuParams {
   openUrlDialog?: (strings: { title: string; label: string; placeholder: string; cancel: string; submit: string }) => void;
   /** Abrir ventana Acerca de (estilo de la app, sin menús) */
   openAboutDialog?: (strings: { title: string; message: string; detail: string; closeLabel: string; githubLabel: string; githubUrl: string }) => void;
+  /** Volver al menú principal (grilla de servicios) */
+  goToMainMenu?: () => void;
+  /** Abrir gestor visual de servicios */
+  openServicesManagerDialog?: () => void;
 }
 
 function getOpt(store: MenuParams['store'], key: string, def: boolean | string): boolean | string {
@@ -42,8 +46,14 @@ export function buildMenu({
   onLocaleChange,
   openUrlDialog,
   openAboutDialog,
+  goToMainMenu: goToMainMenuExternal,
+  openServicesManagerDialog,
 }: MenuParams): void {
   const goToMenu = (): void => {
+    if (goToMainMenuExternal) {
+      goToMainMenuExternal();
+      return;
+    }
     if (!mainWindow || mainWindow.isDestroyed()) return;
     mainWindow.webContents.userAgent = defaultUserAgent;
     mainWindow.loadFile(path.join(getBasePath(), 'src', 'ui', 'index.html')).then(() => {
@@ -211,6 +221,10 @@ export function buildMenu({
             {
               label: t('menu.prefs.startupService'),
               submenu: defaultServiceItems,
+            },
+            {
+              label: t('menu.prefs.manageServices'),
+              click: () => openServicesManagerDialog?.(),
             },
           ],
         },

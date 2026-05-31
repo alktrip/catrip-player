@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:;">
+  <title></title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="services-manager.css">
+</head>
+<body>
+  <div class="aura-bg" aria-hidden="true">
+    <div class="aura-mesh"></div>
+  </div>
+  <main class="svc-mgr" id="svc-mgr" role="dialog" aria-labelledby="svc-mgr-title" aria-modal="true">
+    <header class="svc-mgr-header">
+      <h1 class="svc-mgr-title" id="svc-mgr-title"></h1>
+      <p class="svc-mgr-subtitle" id="svc-mgr-subtitle"></p>
+    </header>
+
+    <section class="svc-mgr-list-wrap" id="svc-mgr-list-wrap" aria-labelledby="svc-mgr-list-label">
+      <h2 class="svc-mgr-list-label" id="svc-mgr-list-label"></h2>
+      <ul class="svc-mgr-list" id="svc-mgr-list" role="list"></ul>
+    </section>
+
+    <section class="svc-mgr-form-wrap" id="svc-mgr-form-wrap" hidden>
+      <h2 class="svc-mgr-form-title" id="svc-mgr-form-title"></h2>
+      <form class="svc-mgr-form" id="svc-mgr-form" novalidate>
+        <label class="svc-mgr-field">
+          <span id="svc-mgr-label-name"></span>
+          <input type="text" id="svc-mgr-name" required maxlength="64" autocomplete="off">
+        </label>
+        <label class="svc-mgr-field">
+          <span id="svc-mgr-label-url"></span>
+          <input type="url" id="svc-mgr-url" required placeholder="https://" autocomplete="url">
+        </label>
+        <div class="svc-mgr-row">
+          <label class="svc-mgr-field svc-mgr-field--color">
+            <span id="svc-mgr-label-color"></span>
+            <input type="color" id="svc-mgr-color" value="#6366f1">
+          </label>
+          <label class="svc-mgr-field svc-mgr-field--logo">
+            <span id="svc-mgr-label-logo"></span>
+            <select id="svc-mgr-logo"></select>
+          </label>
+        </div>
+        <label class="svc-mgr-check">
+          <input type="checkbox" id="svc-mgr-visible">
+          <span id="svc-mgr-label-visible"></span>
+        </label>
+        <label class="svc-mgr-check">
+          <input type="checkbox" id="svc-mgr-media">
+          <span id="svc-mgr-label-media"></span>
+        </label>
+        <p class="svc-mgr-error" id="svc-mgr-error" role="alert" hidden></p>
+        <div class="svc-mgr-form-actions">
+          <button type="button" class="svc-mgr-btn svc-mgr-btn--secondary" id="svc-mgr-form-cancel"></button>
+          <button type="submit" class="svc-mgr-btn svc-mgr-btn--primary" id="svc-mgr-form-apply"></button>
+        </div>
+      </form>
+    </section>
+
+    <footer class="svc-mgr-footer">
+      <button type="button" class="svc-mgr-btn svc-mgr-btn--secondary" id="svc-mgr-add"></button>
+      <div class="svc-mgr-footer-right">
+        <button type="button" class="svc-mgr-btn svc-mgr-btn--secondary" id="svc-mgr-cancel"></button>
+        <button type="button" class="svc-mgr-btn svc-mgr-btn--primary" id="svc-mgr-save"></button>
+      </div>
+    </footer>
+  </main>
+  <script src="services-manager.js"></script>
+</body>
+</html>

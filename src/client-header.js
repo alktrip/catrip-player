@@ -60,6 +60,6 @@
 
   wrap.querySelector('.CatripPlayer-exit-btn').addEventListener('click', function (e) {
     e.stopPropagation();
-    if (window.catrip && window.catrip.ipc) window.catrip.ipc.send('exit-fullscreen');
+    if (window.catrip && window.catrip.ipc) window.catrip.ipc.send('open-main-menu');
   });
 })();

@@ -110,4 +110,50 @@ export function getUIStrings(store: { get: (key: string) => unknown }): Record<s
   return out;
 }
 
+/** Cadenas para el gestor visual de servicios. */
+export function getServicesManagerStrings(store: { get: (key: string) => unknown }): Record<string, string> {
+  const keys = [
+    'svcMgr.title',
+    'svcMgr.subtitle',
+    'svcMgr.listLabel',
+    'svcMgr.formTitle',
+    'svcMgr.formAddTitle',
+    'svcMgr.formEditTitle',
+    'svcMgr.fieldName',
+    'svcMgr.fieldUrl',
+    'svcMgr.fieldColor',
+    'svcMgr.fieldLogo',
+    'svcMgr.fieldVisible',
+    'svcMgr.fieldMedia',
+    'svcMgr.formCancel',
+    'svcMgr.formApply',
+    'svcMgr.add',
+    'svcMgr.cancel',
+    'svcMgr.save',
+    'svcMgr.edit',
+    'svcMgr.delete',
+    'svcMgr.dragHint',
+    'svcMgr.hiddenBadge',
+    'svcMgr.visibleBadge',
+    'svcMgr.confirmDelete',
+    'svcMgr.errorName',
+    'svcMgr.errorDuplicate',
+    'svcMgr.errorUrl',
+    'svcMgr.errorPendingForm',
+    'svcMgr.error.invalidPayload',
+    'svcMgr.error.nameRequired',
+    'svcMgr.error.duplicateName',
+    'svcMgr.error.urlRequired',
+    'svcMgr.error.urlInvalid',
+    'svcMgr.error.logoInvalid',
+    'svcMgr.error.colorInvalid',
+    'svcMgr.error.orderInvalid',
+  ];
+  const out: Record<string, string> = {};
+  keys.forEach((k) => {
+    out[k] = t(store, k);
+  });
+  return out;
+}
+
 export { SUPPORTED_LOCALES };

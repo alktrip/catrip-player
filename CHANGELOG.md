@@ -4,6 +4,22 @@ All notable changes to CatripPlayer are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Visual services manager** (Preferences → Manage services…): add, edit, hide, reorder and delete custom streaming platforms without editing `config.json` manually. Aura-styled modal dialog; persistence via `services` and `serviceOrder` in electron-store.
+- **`services-merge.ts`:** merge logic for default + custom services, validation and persistence from the manager UI.
+- **i18n** for the services manager and menu entry `menu.prefs.manageServices` in all locales (es, en, fr, de, pt, zh).
+
+### Changed
+
+- **Floating island** (frameless): the × control now returns to the **main service grid** (`open-main-menu`) instead of disabling frameless mode; label matches behaviour (“Back to menu”).
+- **Frameless on Linux/Windows:** press **F10** to open the application menu as a popup when the window has no frame.
+- **`goToMainMenu()`** shared between the native menu (Ctrl+H) and the floating island.
+
+---
+
 ## [1.1.3] - 2026-03-28
 
 ### Added

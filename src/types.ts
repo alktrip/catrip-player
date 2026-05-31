@@ -11,4 +11,5 @@ export interface Service {
   permissions?: string[];
   hidden?: boolean;
   _defaultService?: boolean;
+  _customService?: boolean;
 }
