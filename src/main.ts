@@ -13,10 +13,18 @@ import {
 } from './services-merge';
 import type { ServicesManagerSavePayload } from './services-merge';
 import type { Service } from './types';
+import {
+  configureStreamingUserAgent,
+  getStreamingUserAgent,
+  setActiveUserAgent,
+  setupSessionUserAgent,
+} from './user-agent';
+import { ensureWidevineReady, showWidevineFailureDialog } from './widevine';
+
+configureStreamingUserAgent(app);
 
 app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('in-process-gpu');
-app.disableHardwareAcceleration();
 
 interface AppStore {
   get: (key: string) => unknown;
@@ -234,11 +242,19 @@ function setupPermissionHandler(): void {
         return false;
       }
     });
-    const allowed =
-      service?.permissions && Array.isArray(service.permissions) && service.permissions.includes(permission);
-    callback(!!allowed);
+    callback(!!service);
   };
   session.defaultSession.setPermissionRequestHandler(handler as any);
+  session.defaultSession.setPermissionCheckHandler((_wc, permission, requestingOrigin) => {
+    if (permission === 'fullscreen') return true;
+    return currentServices.some((s) => {
+      try {
+        return new URL(s.url).origin === requestingOrigin;
+      } catch {
+        return false;
+      }
+    });
+  });
 }
 
 function openUrlDialog(strings: { title: string; label: string; placeholder: string; cancel: string; submit: string }): void {
@@ -383,7 +399,8 @@ async function createWindow(): Promise<void> {
     show: false,
   });
 
-  defaultUserAgent = mainWindow.webContents.userAgent;
+  defaultUserAgent = getStreamingUserAgent();
+  mainWindow.webContents.userAgent = defaultUserAgent;
   setupPermissionHandler();
   i18n.init(getBasePath());
 
@@ -465,7 +482,7 @@ async function createWindow(): Promise<void> {
   } else if (defaultService) {
     const svc = currentServices.find((s) => s.name === defaultService);
     if (svc?.url) {
-      mainWindow.webContents.userAgent = svc.userAgent || defaultUserAgent;
+      mainWindow.webContents.userAgent = setActiveUserAgent(svc.userAgent || defaultUserAgent);
       mainWindow.loadURL(svc.url);
     } else {
       mainWindow.loadFile(indexPath).catch((err) => console.error(err));
@@ -573,7 +590,7 @@ function loadServiceUrl(service: Service): void {
     logo: service.logo,
     color: service.color || '#666',
   };
-  mainWindow.webContents.userAgent = service.userAgent || defaultUserAgent;
+  mainWindow.webContents.userAgent = setActiveUserAgent(service.userAgent || defaultUserAgent);
   mainWindow.loadURL(service.url);
 }
 
@@ -593,7 +610,8 @@ function getServicesPayload(): {
 
 function goToMainMenu(): void {
   if (!mainWindow || mainWindow.isDestroyed()) return;
-  mainWindow.webContents.userAgent = defaultUserAgent;
+  setActiveUserAgent(defaultUserAgent);
+  mainWindow.webContents.userAgent = getStreamingUserAgent();
   const indexPath = path.join(getBasePath(), 'src', 'ui', 'index.html');
   mainWindow.loadFile(indexPath).then(() => {
     mainWindow?.webContents.send('set-services', getServicesPayload());
@@ -679,25 +697,20 @@ function ensureWindow(): void {
   if (!windowCreated) void createWindow();
 }
 
-(app as NodeJS.EventEmitter).on('widevine-ready', ensureWindow);
-(app as NodeJS.EventEmitter).on('widevine-error', (error: Error) => {
-  console.error('Widevine CDM no disponible:', error.message);
-  ensureWindow();
-});
-
-process.on('unhandledRejection', (reason: unknown) => {
-  const msg = reason instanceof Error ? reason.message : String(reason);
-  if (msg.includes('No component') || msg.includes('Widevine') || msg.includes('404')) {
-    ensureWindow();
-  }
-});
-
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  setupSessionUserAgent(session.defaultSession);
   if (!store.get('version')) {
     store.set('version', app.getVersion());
     store.set('services', []);
   }
-  setTimeout(ensureWindow, 2500);
+  try {
+    await ensureWidevineReady(store);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('Widevine CDM no disponible:', msg);
+    await showWidevineFailureDialog(msg);
+  }
+  ensureWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) void createWindow();
   });

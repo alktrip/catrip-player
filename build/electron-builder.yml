@@ -1,5 +1,5 @@
 # CatripPlayer — empaquetado Linux, Windows y macOS
-# Electron: CastLabs build con Widevine (v38.7.2+wvcus) para Linux/Windows; macOS usa build estándar si se construye en Mac.
+# Electron: CastLabs build con Widevine (v42.0.0+wvcus) para Linux/Windows; macOS usa build estándar si se construye en Mac.
 
 appId: io.catrip.CatripPlayer
 productName: CatripPlayer

@@ -39,7 +39,7 @@ export const defaultServices: Service[] = [
     url: 'https://www.primevideo.com',
     color: '#00A8E1',
     style: {},
-    permissions: [],
+    permissions: ['media'],
   },
   {
     name: 'HBO Max',

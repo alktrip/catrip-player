@@ -1,6 +1,7 @@
 import { Menu, shell, BrowserWindow, app } from 'electron';
 import * as path from 'path';
 import type { Service } from './types';
+import { getStreamingUserAgent, setActiveUserAgent } from './user-agent';
 import { getLocale, setLocale, getUIStrings, SUPPORTED_LOCALES } from './i18n';
 
 interface MenuParams {
@@ -55,7 +56,8 @@ export function buildMenu({
       return;
     }
     if (!mainWindow || mainWindow.isDestroyed()) return;
-    mainWindow.webContents.userAgent = defaultUserAgent;
+    setActiveUserAgent(defaultUserAgent);
+    mainWindow.webContents.userAgent = getStreamingUserAgent();
     mainWindow.loadFile(path.join(getBasePath(), 'src', 'ui', 'index.html')).then(() => {
       mainWindow?.webContents.send('set-services', {
         services,
@@ -74,7 +76,7 @@ export function buildMenu({
       if (loadServiceUrl) {
         loadServiceUrl(service);
       } else {
-        mainWindow.webContents.userAgent = service.userAgent || defaultUserAgent;
+        mainWindow.webContents.userAgent = setActiveUserAgent(service.userAgent || defaultUserAgent);
         mainWindow.loadURL(service.url);
       }
       mainWindow.webContents.send('run-loader', service);

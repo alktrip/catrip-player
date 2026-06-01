@@ -6,7 +6,7 @@
 
 Unified streaming client for desktop. One window for Netflix, YouTube, Twitch, Amazon Prime Video, HBO Max, Apple TV, Crunchyroll, Disney+ and more. Built with **Electron** and **TypeScript** (Linux, Windows, and macOS).
 
-![Version](https://img.shields.io/badge/version-1.1.3-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.0-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 
 ---
 
@@ -73,7 +73,7 @@ TypeScript is compiled, the window opens, and the service menu is shown. From th
 | `libva error: i965_drv_video.so init failed` | The script already uses `LIBVA_DRIVER_NAME=iHD`. If it persists: `sudo apt install intel-media-va-driver-non-free`. |
 | "Failed to install Widevine" (404) | The app still opens. Netflix requires CastLabs Electron (included). |
 | Crash when opening Netflix | `npm start` already includes `--no-sandbox`. Without GPU: `electron . --no-sandbox --disable-gpu`. |
-| "Update required" on Netflix | Use CastLabs Electron v38+ (Chrome 116+). The project uses `v38.7.2+wvcus`. |
+| "Update required" on Netflix / Prime error 7132 | Use CastLabs Electron v40+ (CDM from Google). The project uses `v42.0.0+wvcus`. If Widevine fails, delete `~/.config/catripplayer/WidevineCdm` and restart. |
 
 ---
 
@@ -165,7 +165,7 @@ CatripPlayer/
 | UI         | `src/ui/` (menu, URL dialog, Aura styles) |
 | i18n       | JSON in `src/locales/` (es, en, fr, pt, de, zh), module `src/i18n.ts` |
 | Persistence| electron-store (`config.json` in userData) |
-| DRM        | Electron CastLabs (Widevine), `v38.7.2+wvcus` |
+| DRM        | Electron CastLabs (Widevine), `v42.0.0+wvcus` |
 | Packaging  | electron-builder (Linux: AppImage, deb; Windows: NSIS; macOS: zip/dmg) |
 
 ---
